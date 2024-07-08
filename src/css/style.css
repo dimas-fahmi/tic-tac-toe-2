@@ -1,0 +1,17 @@
+:root {
+  /* COLORS */
+  --primary: #0b132b;
+  --secondary: #1c2541;
+  --tertiary: #3a506b;
+  --quaternary: #5bc0be;
+  --quinary: #6fffe9;
+  --senary: #fbff00;
+  /* GENERALS */
+  --light: #fff;
+  --dark: #000;
+}
+
+body {
+  background-color: var(--primary);
+  color: var(--light);
+}
