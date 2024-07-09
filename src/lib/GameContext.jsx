@@ -31,7 +31,7 @@ const GameContextProvider = ({ children }) => {
   const [winner, setWinner] = useState(null);
 
   // Helper State
-  const [helper, setHelper] = useState(false);
+  const [helper, setHelper] = useState(true);
 
   // Helper Toggler
   const helper_toggler = () => setHelper(!helper);
