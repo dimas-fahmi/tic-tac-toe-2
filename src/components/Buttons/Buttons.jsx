@@ -1,13 +1,19 @@
 import React from "react";
+import { ACTIONS } from "../../lib/actions";
+import useGameContext from "../../lib/hooks/useGameContext";
+// Audio Toggler Button Icons
 import { GrPowerReset } from "react-icons/gr";
 import { IoVolumeHigh } from "react-icons/io5";
+//  Computer Toggler Button Icons
 import { FaComputer } from "react-icons/fa6";
-import { MdEdit } from "react-icons/md";
-import { FaDonate } from "react-icons/fa";
-import { FaGithub } from "react-icons/fa6";
-import useGameContext from "../../lib/hooks/useGameContext";
-import { ACTIONS } from "../../lib/actions";
 import { IoPersonSharp } from "react-icons/io5";
+// Helper Toggler Button Icons
+import { RiDeleteBin2Line } from "react-icons/ri";
+import { RiDeleteBin7Fill } from "react-icons/ri";
+// Donate Button Icon
+import { FaDonate } from "react-icons/fa";
+// Github Button Icon
+import { FaGithub } from "react-icons/fa6";
 
 const circleStyle =
   "p-2 text-lg border-2 rounded-full border-quaternary text-quaternary hover:bg-quaternary hover:text-primary hover:rotate-[360deg] active:bg-septenary active:border-septenary transition-all duration-300 basis-100 h-fit w-fit";
@@ -32,10 +38,6 @@ const CoreHandler = (instruction) => {
       };
     case "computer":
       return ai_toggler;
-    case "edit":
-      return () => {
-        dispatch({ type: ACTIONS.EDIT_PLAYER });
-      };
     case "next_round":
       return () => {
         dispatch({ type: ACTIONS.NEXT_ROUND, winner: winner });
@@ -79,20 +81,21 @@ export const ComputerGameButton = () => {
         {!AI ? <FaComputer /> : <IoPersonSharp />}
       </button>
       <button className={collapseChildStyle} onClick={onClick}>
-        {!AI ? <p>Play Against Computer</p> : <p>Play Against Human</p>}
+        {!AI ? <p>vs Computer</p> : <p>vs Human</p>}
       </button>
     </div>
   );
 };
 
-export const EditGameButton = () => {
+export const HelperGameButton = () => {
+  const { helper, helper_toggler } = useGameContext();
   return (
     <div className={collapseParrentStyle}>
       <button className={circleStyle}>
-        <MdEdit />
+        {helper ? <RiDeleteBin2Line /> : <RiDeleteBin7Fill />}
       </button>
-      <button className={collapseChildStyle}>
-        <p>Edit Your Name</p>
+      <button className={collapseChildStyle} onClick={helper_toggler}>
+        <p>Turn {helper ? "off" : "on"} helper</p>
       </button>
     </div>
   );

@@ -1,10 +1,16 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import useGameContext from "../../../lib/hooks/useGameContext";
 import { ACTIONS } from "../../../lib/actions";
+import { RiDeleteBin7Fill } from "react-icons/ri";
 
 function GameBoardBox({ boxId, boxHolder }) {
   // GET dispatch, xNext, winner from GameContext
-  const { xNext, winner, dispatch } = useGameContext();
+  const { xNext, winner, dispatch, moves, helper, boardState } =
+    useGameContext();
+
+  // Helper State | Get from last moves of each player
+  const lastX = moves.x[moves.x.length - 1];
+  const lastO = moves.o[moves.x.length - 1];
 
   // dispatch handler for Advancing the Game (push the new holder to state)
   const advanceDispatchHandler = () => {
@@ -41,6 +47,19 @@ function GameBoardBox({ boxId, boxHolder }) {
         } group-hover:opacity-100 transition-all`}
       >
         {!boxHolder ? (xNext ? "X" : "O") : boxHolder.toUpperCase()}
+        {moves.x.length > 2 || moves.o.length > 2 ? (
+          <span
+            className={`absolute flex ${
+              !helper && "hidden"
+            } items-center justify-center text-sm top-2 right-2 ${
+              boxId === lastX || boxId === lastO ? "opacity-100" : "opacity-0"
+            }`}
+          >
+            <RiDeleteBin7Fill />
+          </span>
+        ) : (
+          ""
+        )}
       </div>
     </div>
   );

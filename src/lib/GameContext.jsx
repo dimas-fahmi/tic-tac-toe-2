@@ -27,10 +27,16 @@ const GameContextProvider = ({ children }) => {
     initialValues
   );
 
-  //   Winner State
+  // Winner State
   const [winner, setWinner] = useState(null);
 
-  //   Winner Logics | Fired everytime there's a change to boardState
+  // Helper State
+  const [helper, setHelper] = useState(false);
+
+  // Helper Toggler
+  const helper_toggler = () => setHelper(!helper);
+
+  // Winner Logics | Fired everytime there's a change to boardState
   useEffect(() => {
     // SetBack winner to null when the next round event fired
     if (boardState.filter((box) => box === null).length > 8) {
@@ -61,7 +67,9 @@ const GameContextProvider = ({ children }) => {
         winner,
         boardState,
         AI,
+        helper,
         ai_toggler,
+        helper_toggler,
         dispatch,
       }}
     >
