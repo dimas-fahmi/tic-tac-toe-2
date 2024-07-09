@@ -1,4 +1,5 @@
 import { ACTIONS } from "./actions";
+import { core, decisionMaker } from "./core";
 
 // Cut Move Function
 function cutMove(boardState, moves) {
@@ -13,7 +14,8 @@ const reducer = (state, { type, boxId, newHolder, winner, initialValues }) => {
     updatedMovesO = state.moves.o.slice(),
     updatedScore,
     updatedMoves,
-    newStates;
+    cutMoveResult,
+    aiResponse;
 
   switch (type) {
     case ACTIONS.ADVANCE:
@@ -26,8 +28,26 @@ const reducer = (state, { type, boxId, newHolder, winner, initialValues }) => {
       // Update the boardState (push the new holder to board)
       updatedBoardState[boxId] = newHolder;
 
+      // AI LOGIC
+      if (state.AI) {
+        // Send the new boardState to Core and get the response
+        aiResponse = core(updatedBoardState, "o");
+        // Assign the altered response to the boardState
+        updatedBoardState[aiResponse] = "o";
+        // Cut the moves and remove it from boardState if longer than 2
+        if (updatedMovesO.length > 2) {
+          // Get the new UpdatedBoardState and Move after the cut
+          cutMoveResult = cutMove(updatedBoardState, updatedMovesO);
+          // Assign the new UpdatedBoardState after the cut
+          updatedBoardState = cutMoveResult.boardState;
+          // Assign the new Moves after the cut
+          updatedMovesO = cutMoveResult.moves;
+        }
+        // Push the new boxId to moves
+        updatedMovesO = [aiResponse, ...updatedMovesO];
+      }
+
       // Moves Logic to implement the Unlimited move
-      let cutMoveResult;
       if (newHolder === "x") {
         // Cut the moves and remove it from boardState if longer than 2
         if (updatedMovesX.length > 2) {
@@ -54,14 +74,13 @@ const reducer = (state, { type, boxId, newHolder, winner, initialValues }) => {
         updatedMovesO = [boxId, ...updatedMovesO];
       }
 
+      // Assign the new moves to the new state
       updatedMoves = { x: updatedMovesX, o: updatedMovesO };
-
-      console.log(updatedMoves);
 
       //   Return The New State
       return {
         ...state,
-        xNext: !state.xNext,
+        xNext: state.AI ? true : !state.xNext,
         boardState: updatedBoardState,
         moves: updatedMoves,
       };
@@ -107,6 +126,7 @@ const reducer = (state, { type, boxId, newHolder, winner, initialValues }) => {
         boardState: initialValues.boardState,
         xNext: initialValues.xNext,
         score: initialValues.score,
+        moves: initialValues.moves,
         AI: !state.AI,
       };
   }
