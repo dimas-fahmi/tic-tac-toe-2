@@ -1,4 +1,4 @@
-import evaluator from "./services";
+import { evaluator } from "./services";
 
 function decisionMaker(boardState, holder) {
   // Filter the indices of the null values in the boardState

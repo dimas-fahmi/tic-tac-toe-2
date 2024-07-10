@@ -1,7 +1,7 @@
 import { useEffect, useReducer, useState } from "react";
 import { createContext } from "react";
 import reducer from "./reducer";
-import evaluator from "./services";
+import { evaluator } from "./services";
 import { ACTIONS } from "./actions";
 
 const GameContext = createContext();
@@ -18,17 +18,13 @@ const initialValues = {
   },
   boardState: Array(9).fill(null),
   AI: false,
+  winner: null,
 };
 
 const GameContextProvider = ({ children }) => {
   // STATES & LOGICS
-  const [{ xNext, moves, score, boardState, AI }, dispatch] = useReducer(
-    reducer,
-    initialValues
-  );
-
-  // Winner State
-  const [winner, setWinner] = useState(null);
+  const [{ xNext, moves, score, boardState, AI, winner }, dispatch] =
+    useReducer(reducer, initialValues);
 
   // Helper State
   const [helper, setHelper] = useState(true);
@@ -36,26 +32,9 @@ const GameContextProvider = ({ children }) => {
   // Helper Toggler
   const helper_toggler = () => setHelper(!helper);
 
-  // Winner Logics | Fired everytime there's a change to boardState
-  useEffect(() => {
-    // SetBack winner to null when the next round event fired
-    if (boardState.filter((box) => box === null).length > 8) {
-      setWinner(null);
-      return;
-    }
-
-    // SetWinner when winner is found
-    const result = evaluator(boardState);
-    if (result !== null) {
-      setWinner(result);
-      dispatch({ type: ACTIONS.UPDATE_SCORE, winner: result });
-      return;
-    }
-  }, [boardState]);
-
   //   AI Toggler Handler
   const ai_toggler = () => {
-    dispatch({ type: ACTIONS.TOGGLE_AI, initialValues: initialValues });
+    dispatch({ type: ACTIONS.TOGGLE_AI });
   };
 
   return (

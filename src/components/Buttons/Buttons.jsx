@@ -30,7 +30,7 @@ const CoreHandler = (instruction) => {
   switch (instruction) {
     case "reset":
       return () => {
-        dispatch({ type: ACTIONS.RESET });
+        dispatch({ type: ACTIONS.RESET_GAME });
       };
     case "sound":
       return () => {
@@ -52,8 +52,9 @@ const CoreHandler = (instruction) => {
 };
 
 export const ResetGameButton = () => {
+  const onClick = CoreHandler("reset");
   return (
-    <button className={circleStyle}>
+    <button className={circleStyle} onClick={onClick}>
       <GrPowerReset />
     </button>
   );

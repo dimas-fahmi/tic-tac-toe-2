@@ -18,3 +18,5 @@ This will not change the game as a solved game but will make the game harder as 
 # MINIMAX IMPLEMENTATION
 
 I thought with the Minimax implementation, even with the Unlimited Moves rule, the game would be broken as the AI would keep winning by making perfect decisions. But the result said otherwise: the AI can be defeated, even if it's a hard thing to do. I will analyze my Minimax function further; it needs more analysis.
+
+- Update : I get it why the Minimax can be beaten is because the Alghorithm does not consider there's an Unlimited Moves rule, so it only simulate the possibilities of original rules (untill the board full, in other words no more moves can be taken === draw). I'm not going to change it, the game is more fun this way. Perhaps I'll add 3 Dificulties later, Easy = Just Random Picking Bot, Medium = This Minimax Alghorithm, Impossible = Minimax that'll simulate the Unlimited Moves Rule.

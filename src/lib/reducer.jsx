@@ -1,108 +1,31 @@
 import { ACTIONS } from "./actions";
-import { core, decisionMaker } from "./core";
-
-// Cut Move Function
-function cutMove(boardState, moves) {
-  boardState[moves[moves.length - 1]] = null;
-  moves.pop();
-  return { boardState: boardState, moves: moves };
-}
+import { pvc_controller, advance_controller } from "./services";
+import { core } from "./core";
 
 const reducer = (state, { type, boxId, newHolder, winner, initialValues }) => {
   let updatedBoardState = state.boardState.slice(),
-    updatedMovesX = state.moves.x.slice(),
-    updatedMovesO = state.moves.o.slice(),
     updatedScore,
-    updatedMoves,
-    cutMoveResult,
-    aiResponse;
+    updatedMoves;
 
   switch (type) {
     case ACTIONS.ADVANCE:
-      // Check if there's already a winner | Do nothing if true
+      // ---------- VALIDATION ----------
+
+      //  - Check if there's a winner | Do Nothing if True
       if (winner !== null) return state;
 
-      // check if board is already owned | Do nothing if true
+      // - Check if board is owned | Do Nothing if True
       if (state.boardState[boxId] !== null) return state;
 
-      // Update the boardState (push the new holder to board)
-      updatedBoardState[boxId] = newHolder;
-
-      // AI LOGIC
+      // ---------- Controller Director ----------
+      // [run the controller according to game mode]
       if (state.AI) {
-        // Send the new boardState to Core and get the response
-        aiResponse = core(updatedBoardState, "o");
-        // Assign the altered response to the boardState
-        updatedBoardState[aiResponse] = "o";
-        // Cut the moves and remove it from boardState if longer than 2
-        if (updatedMovesO.length > 2) {
-          // Get the new UpdatedBoardState and Move after the cut
-          cutMoveResult = cutMove(updatedBoardState, updatedMovesO);
-          // Assign the new UpdatedBoardState after the cut
-          updatedBoardState = cutMoveResult.boardState;
-          // Assign the new Moves after the cut
-          updatedMovesO = cutMoveResult.moves;
-        }
-        // Push the new boxId to moves
-        updatedMovesO = [aiResponse, ...updatedMovesO];
+        // Player vs Computer Mode
+        return pvc_controller(state, boxId, newHolder);
+      } else {
+        // Player vs Player Mode
+        return advance_controller(state, boxId, newHolder);
       }
-
-      // Moves Logic to implement the Unlimited move
-      if (newHolder === "x") {
-        // Cut the moves and remove it from boardState if longer than 2
-        if (updatedMovesX.length > 2) {
-          // Get the new UpdatedBoardState and Move after the cut
-          cutMoveResult = cutMove(updatedBoardState, updatedMovesX);
-          // Assign the new UpdatedBoardState after the cut
-          updatedBoardState = cutMoveResult.boardState;
-          // Assign the new Moves after the cut
-          updatedMovesX = cutMoveResult.moves;
-        }
-        // Push the new boxId to moves
-        updatedMovesX = [boxId, ...updatedMovesX];
-      } else if (newHolder === "o") {
-        // Cut the moves and remove it from boardState if longer than 2
-        if (updatedMovesO.length > 2) {
-          // Get the new UpdatedBoardState and Move after the cut
-          cutMoveResult = cutMove(updatedBoardState, updatedMovesO);
-          // Assign the new UpdatedBoardState after the cut
-          updatedBoardState = cutMoveResult.boardState;
-          // Assign the new Moves after the cut
-          updatedMovesO = cutMoveResult.moves;
-        }
-        // Push the new boxId to moves
-        updatedMovesO = [boxId, ...updatedMovesO];
-      }
-
-      // Assign the new moves to the new state
-      updatedMoves = { x: updatedMovesX, o: updatedMovesO };
-
-      //   Return The New State
-      return {
-        ...state,
-        xNext: state.AI ? true : !state.xNext,
-        boardState: updatedBoardState,
-        moves: updatedMoves,
-      };
-    case ACTIONS.UPDATE_SCORE:
-      // Indent the new score from based on the winner
-      if (winner === "x") {
-        updatedScore = {
-          x: state.score.x + 1,
-          o: state.score.o,
-        };
-      } else if (winner === "o") {
-        updatedScore = {
-          x: state.score.x,
-          o: state.score.o + 1,
-        };
-      }
-
-      //   Return The New State
-      return {
-        ...state,
-        score: updatedScore,
-      };
     case ACTIONS.NEXT_ROUND:
       //   Check if there's a winner | Return if there's no winner
       if (winner === null) return state;
@@ -113,21 +36,64 @@ const reducer = (state, { type, boxId, newHolder, winner, initialValues }) => {
       //   Reset Moves to Initial Valuse
       updatedMoves = { x: [], o: [] };
 
-      //   Return The New State
-      return {
-        ...state,
-        boardState: updatedBoardState,
-        moves: updatedMoves,
-      };
+      switch (state.AI) {
+        case true:
+          // Return if it's the player's turn
+          if (state.xNext) {
+            //   Return The New State
+            return {
+              ...state,
+              boardState: updatedBoardState,
+              moves: updatedMoves,
+              winner: null,
+            };
+          }
+
+          // Get AI Response
+          let aiResponse = core(updatedBoardState, "o");
+
+          // set customState
+          let customState = {
+            xNext: false,
+            boardState: updatedBoardState,
+            score: state.score,
+            moves: updatedMoves,
+            AI: true,
+            winner: null,
+          };
+
+          // Assign the AI's move to boardState and Proceeds
+          return advance_controller(customState, aiResponse, "o");
+        case false:
+          //   Return The New State
+          return {
+            ...state,
+            boardState: updatedBoardState,
+            moves: updatedMoves,
+            winner: null,
+          };
+        default:
+          throw new Error("AI State is invalid at NEXT_ROUND action.");
+      }
     case ACTIONS.TOGGLE_AI:
       // Return The New State with Initial Values and Toggle the AI
       return {
-        ...state,
-        boardState: initialValues.boardState,
-        xNext: initialValues.xNext,
-        score: initialValues.score,
-        moves: initialValues.moves,
+        boardState: Array(9).fill(null),
+        xNext: true,
+        score: { x: 0, o: 0 },
+        moves: { x: [], o: [] },
         AI: !state.AI,
+        winner: null,
+      };
+    case ACTIONS.RESET_GAME:
+      // Return The New State with Initial Values and Toggle the AI
+      return {
+        boardState: Array(9).fill(null),
+        xNext: true,
+        score: { x: 0, o: 0 },
+        moves: { x: [], o: [] },
+        AI: state.AI,
+        winner: null,
       };
   }
 
