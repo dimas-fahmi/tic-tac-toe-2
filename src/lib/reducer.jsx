@@ -1,6 +1,6 @@
 import { ACTIONS } from "./actions";
 import { pvc_controller, advance_controller } from "./services";
-import { core } from "./core";
+import { randomizer } from "./core";
 
 const reducer = (state, { type, boxId, newHolder, winner, initialValues }) => {
   let updatedBoardState = state.boardState.slice(),
@@ -50,7 +50,7 @@ const reducer = (state, { type, boxId, newHolder, winner, initialValues }) => {
           }
 
           // Get AI Response
-          let aiResponse = core(updatedBoardState, "o");
+          let aiResponse = randomizer(updatedBoardState, "o");
 
           // set customState
           let customState = {

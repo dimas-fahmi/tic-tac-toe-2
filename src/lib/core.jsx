@@ -1,6 +1,6 @@
 import { evaluator } from "./services";
 
-function decisionMaker(boardState, holder) {
+function randomizer(boardState, holder) {
   // Filter the indices of the null values in the boardState
   let nullIndices = boardState.reduce((acc, val, index) => {
     if (val === null) acc.push(index);
@@ -17,7 +17,7 @@ function decisionMaker(boardState, holder) {
   let newBoardState = [...boardState];
   newBoardState[randomIndex] = holder;
 
-  return { newBoardState: newBoardState, randomIndex: randomIndex };
+  return randomIndex;
 }
 
 // Minimax function to evaluate the boardState
@@ -79,4 +79,4 @@ function core(boardState, aiPlayer) {
   return bestMove;
 }
 
-export { core, decisionMaker };
+export { core, randomizer };
