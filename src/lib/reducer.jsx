@@ -60,6 +60,7 @@ const reducer = (state, { type, boxId, newHolder, winner, initialValues }) => {
             moves: updatedMoves,
             AI: true,
             winner: null,
+            mute: state.mute,
           };
 
           // Assign the AI's move to boardState and Proceeds
@@ -84,6 +85,7 @@ const reducer = (state, { type, boxId, newHolder, winner, initialValues }) => {
         moves: { x: [], o: [] },
         AI: !state.AI,
         winner: null,
+        mute: state.mute,
       };
     case ACTIONS.RESET_GAME:
       // Return The New State with Initial Values and Toggle the AI
@@ -94,6 +96,12 @@ const reducer = (state, { type, boxId, newHolder, winner, initialValues }) => {
         moves: { x: [], o: [] },
         AI: state.AI,
         winner: null,
+        mute: state.mute,
+      };
+    case ACTIONS.SOUND_TOGGLE:
+      return {
+        ...state,
+        mute: !state.mute,
       };
   }
 

@@ -9,8 +9,8 @@ function GameBoardBox({ boxId, boxHolder }) {
     useGameContext();
 
   // Helper State | Get from last moves of each player
-  const lastX = moves.x[moves.x.length - 1];
-  const lastO = moves.o[moves.x.length - 1];
+  const lastX = moves.x[2];
+  const lastO = moves.o[2];
 
   // dispatch handler for Advancing the Game (push the new holder to state)
   const advanceDispatchHandler = () => {

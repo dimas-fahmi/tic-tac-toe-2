@@ -7,7 +7,7 @@ Improvement from my first project with React: [TIC TAC TOE](https://github.com/d
 - Better Code Structure (No more props drilling; useContext is in the home!)
 - Designed for Mobile (doesn't need to be responsive as the UI is set to 450px wide)
 - AI Opponent with Minimax Algorithm (the AI will not just pick a random box but will simulate every decision and choose the best one. In other words, the AI will predict the future).
-- Sound Effects & Background Music (Planned)
+- Sound Effects & Background Music
 
 # UNLIMITED MOVES
 

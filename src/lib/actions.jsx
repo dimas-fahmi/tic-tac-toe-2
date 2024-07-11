@@ -4,4 +4,5 @@ export const ACTIONS = {
   NEXT_ROUND: "next_round",
   TOGGLE_AI: "toggle_ai",
   RESET_GAME: "reset",
+  SOUND_TOGGLE: "sound",
 };

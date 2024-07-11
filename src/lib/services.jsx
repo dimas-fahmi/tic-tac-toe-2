@@ -62,10 +62,18 @@ function moves_method(boardState, moves, boxId, newHolder) {
   return { boardState: boardState, moves: moves };
 }
 
-// Advance Controller
+// Audio Service
+function audioService(source, mute) {
+  // Do Nothing if mute is true
+  if (mute) return;
+  // Create a new Audio based on source
+  const audio = new Audio(source);
+  // Play the audio
+  audio.play();
+}
 
 // advance_controller | Simple push and change the turn
-function advance_controller(state, boxId, newHolder) {
+function advance_controller(state, boxId, newHolder, ai = false) {
   // Copy and Altered BoardState
   let newBoardState = boardState_method(state.boardState, boxId, newHolder);
 
@@ -83,8 +91,20 @@ function advance_controller(state, boxId, newHolder) {
 
   // If there's a winner after push, indent the winner's score
   let newScore = state.score;
+
   if (winner !== null) {
     newScore[winner] = newScore[winner] + 1;
+    if (ai) {
+      audioService("/tic-tac-toe-2/sounds/over.wav", state.mute);
+    } else {
+      // Play the Triump audio
+      audioService("/tic-tac-toe-2/sounds/triumph.wav", state.mute);
+    }
+  } else {
+    if (!ai) {
+      // Play the Bling Audio
+      audioService("/tic-tac-toe-2/sounds/bling.wav", state.mute);
+    }
   }
 
   // Return the New State
@@ -100,7 +120,7 @@ function advance_controller(state, boxId, newHolder) {
 // ai_response_controller
 function ai_response_controller(humanResponse) {
   const aiResponse = core(humanResponse.boardState, "o");
-  return advance_controller(humanResponse, aiResponse, "o");
+  return advance_controller(humanResponse, aiResponse, "o", true);
 }
 
 // pvc_controller | Player vs Computer

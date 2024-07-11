@@ -19,11 +19,12 @@ const initialValues = {
   boardState: Array(9).fill(null),
   AI: false,
   winner: null,
+  mute: false,
 };
 
 const GameContextProvider = ({ children }) => {
   // STATES & LOGICS
-  const [{ xNext, moves, score, boardState, AI, winner }, dispatch] =
+  const [{ xNext, moves, score, boardState, AI, winner, mute }, dispatch] =
     useReducer(reducer, initialValues);
 
   // Helper State
@@ -47,6 +48,7 @@ const GameContextProvider = ({ children }) => {
         boardState,
         AI,
         helper,
+        mute,
         ai_toggler,
         helper_toggler,
         dispatch,
